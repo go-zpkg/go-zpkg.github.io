@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ .Site.Title }} — the pkgx world in pure Go, running on FROM scratch</title>
-<meta name="description" content="go-zpkg — the pkgx world in pure Go (CGO_ENABLED=0): a runtime (zpkgx), an installer (zpkgm) and the bottle backend they share. Single static binaries with no libc of their own, so they run on a literally empty FROM scratch image and materialise real packages there. Plus a signed, attested bottle registry built by a CGO-free factory.">
+<title>{{ .Site.Title }} — a package manager in pure Go, running on FROM scratch</title>
+<meta name="description" content="go-zpkg — a package manager in pure Go (CGO_ENABLED=0): a runtime (zpkgx), an installer (zpkgm) and the bottle backend they share. Single static binaries with no libc of their own, so they run on a literally empty FROM scratch image and materialise real packages there. Plus a signed, attested bottle registry built by a CGO-free factory.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 {{ partial "styles.html" . }}
 {{ partial "site-styles.html" . }}
@@ -22,7 +22,26 @@
   <div class="hero"><div class="wrap">
     <div>
       <h1 class="head">No libc of its own,<br><span class="accent">so there is nowhere it cannot run.</span></h1>
-      <p class="sub">The pkgx world rebuilt in pure <code>CGO_ENABLED=0</code> Go: a <b>runtime</b> that runs packages on the fly, an <b>installer</b> that mirrors the reference CLI, and the <b>bottle backend</b> they share. The reference tools shell out to zpkgx + deno + curl + openssl + xz — on the order of <b>515&nbsp;MB</b> of runtime closure — a figure this page has carried without a date or an instrument beside it, unlike every other number here, and it is the one claim about somebody else's software that nobody has re-measured. These replace all of it with single <b>9.1&nbsp;MB</b> static binaries that need no libc at all, so they run on a literally empty <code>FROM scratch</code> image and materialise real packages there. BSD-3-Clause.</p>
+      {{/* ⛔⛔ THE COMPARISON IS GONE, AND NOT BECAUSE IT FLATTERED US LESS.
+           This paragraph used to open "The pkgx world rebuilt in pure Go" and
+           set 515 MB of somebody else's runtime closure against our 9.1 MB
+           binaries. Two things were wrong with it, and only one was obvious.
+
+           The obvious one it already confessed in its own sentence: the
+           515 MB carried "no date or an instrument beside it, unlike every
+           other number here". A figure nobody can reproduce does not become
+           acceptable by admitting it.
+
+           The one that settles it: we are no longer compatible with that
+           software. A size comparison is an argument about two tools doing
+           the SAME job, and once the pantry, the recipe format and the
+           protocol have parted there is no same job to compare. Keeping the
+           number would have been claiming a win in a race we left.
+
+           Our own 9.1 MB stays, because it is ours, it is measurable, and it
+           is the claim that matters here: a binary small enough and static
+           enough to be the only file in an image. */}}
+      <p class="sub">A <b>runtime</b> that runs packages on the fly, an <b>installer</b>, and the <b>bottle backend</b> they share — in pure <code>CGO_ENABLED=0</code> Go. Single <b>9.1&nbsp;MB</b> static binaries that need no libc at all, so they run on a literally empty <code>FROM scratch</code> image and materialise real packages there. BSD-3-Clause.</p>
       <div class="cta">
         <a class="btn btn-primary" href="#install">{{ partial "icons/arrow-right.html" . }}Install in one line →</a>
       </div>
@@ -58,7 +77,7 @@
     <span class="eyebrow">Install</span>
     <h2>One line, and it names a version on purpose.</h2>
     <p class="lead">It downloads the static binary for your os/arch from a named GitHub release, verifies it against that release's <code>SHA256SUMS</code>, and puts it on your <code>PATH</code>. A line copied today and the same line copied in six months install the same bytes — and a bad release does not reach everyone who happens to install that hour.</p>
-    <p class="lead"><code>zpkgm</code> <b>installs</b>, <code>zpkgx</code> <b>runs</b> without installing, and <code>zpkgs</code> <b>answers about</b> packages — <code>ls</code>, <code>search</code>, <code>why</code>, <code>catalog</code>, <code>store</code>, <code>browse</code>, and <code>request</code> when a package is <i>not</i> there, which prints a report you can open as an issue and <b>sends nothing</b>. The last two ship from one release: the word after <code>zpkgx</code> is a <b>package</b>, as it is upstream, so <code>zpkgx ls</code> runs GNU ls and the verbs needed a command of their own.</p>
+    <p class="lead"><code>zpkgm</code> <b>installs</b>, <code>zpkgx</code> <b>runs</b> without installing, and <code>zpkgs</code> <b>answers about</b> packages — <code>ls</code>, <code>search</code>, <code>why</code>, <code>catalog</code>, <code>store</code>, <code>browse</code>, and <code>request</code> when a package is <i>not</i> there, which prints a report you can open as an issue and <b>sends nothing</b>. The last two ship from one release: the word after <code>zpkgx</code> is a <b>package</b>, so <code>zpkgx ls</code> runs GNU ls and the verbs needed a command of their own.</p>
     <div class="grid">
       <div class="card">
         <div class="ico">🐧</div><h3>Linux / macOS</h3>
@@ -96,7 +115,12 @@ irm https://go-zpkg.github.io/install.ps1 | iex</code></pre>
   <section id="perf" style="padding-top:10px"><div class="wrap">
     <div class="stats">
       <div><div class="n">{{ len .Site.Params.repos }}</div><div class="l">repositories, one job each</div></div>
-      <div><div class="n">~9&nbsp;MB</div><div class="l">static binary, against ~515&nbsp;MB of reference closure</div></div>
+      {{/* ⛔ "against ~515 MB of reference closure" was here, and it is the
+           same discarded comparison as the hero paragraph above — a figure
+           for somebody else's software, with no date and no instrument, and
+           now about software we no longer interoperate with. What is left is
+           the measurement that is ours and stands alone. */}}
+      <div><div class="n">~9&nbsp;MB</div><div class="l">static binary, and no libc of its own</div></div>
       <div><div class="n">1430</div><div class="l">of 1908 projects carry a linux/aarch64 bottle, read off the catalogue the factory published on 2026-10-06 — and the other 478 are <i>named</i>, marked as having none here, rather than hidden</div></div>
       <div><div class="n">0</div><div class="l">runtime dependencies — no libc, no deno, no curl</div></div>
     </div>
@@ -182,7 +206,7 @@ git-scm.org — 2.55.0  ✓ 2.47.1
   <section id="registry"><div class="wrap">
     <span class="eyebrow">Provenance</span>
     <h2>A signed, attested package registry.</h2>
-    <p class="lead">The org runs its own bottle registry at <code>ghcr.io/go-pkgx/packages</code>. A pure-Go factory builds pkgx pantry recipes with <b>zbk</b>, a CGO-free re-implementation of brewkit, and publishes through two channels: the signed OCI registry and a GitHub Pages <code>zpkgx-dist</code> mirror.</p>
+    <p class="lead">The org runs its own bottle registry at <code>ghcr.io/go-pkgx/packages</code>. A pure-Go factory builds pantry recipes with <b>zbk</b>, and publishes through two channels: the signed OCI registry and a GitHub Pages <code>zpkgx-dist</code> mirror.</p>
     <div class="grid">
       <div class="card"><div class="ico">🔏</div><h3>Fail-closed by default</h3><p>Each bottle carries, as OCI referrers, a CycloneDX SBOM, an in-toto SLSA provenance statement and a cosign-style signature verified against a pinned key. On install <code>ZPKG_VERIFY=1</code> refuses an unsigned or badly-signed bottle.</p></div>
       <div class="card"><div class="ico">📥</div><h3>What went in, not only what came out</h3><p>The provenance records the source archive's SHA-256 (or a git commit) as well as the artefact. Over half this pantry builds from tarballs GitHub <i>generates</i> on request rather than stores, so for those it is the first stored record they have ever had.</p></div>
