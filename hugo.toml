@@ -61,7 +61,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   pkg = "github.com/go-zpkg/mirror"
   url = "https://github.com/go-zpkg/mirror"
   status = "ready"
-  blurb = "**Sync a local mirror** of pkgx bottles from the official dist into the same servable tree layout — per os/arch, incremental, with `--closure` to pull a package's full runtime closure (plus the implicit `FROM scratch` system libs). Serve it statically and point zpkgm/zpkgx at it with `ZPKG_DIST=<mirror-url>`."
+  blurb = "**Sync a local mirror** of our own signed bottles — the registry the factory publishes to, named once as `bottle.DistBase` — into the same servable tree layout, per os/arch, incremental, with `--closure` to pull a package's full runtime closure (plus the implicit `FROM scratch` system libs). Serve it statically and point zpkgm/zpkgx at it with `ZPKG_DIST=<mirror-url>`. It is **not** an upstream pkgx dist and does not synchronise from one; `--from` takes any registry you like, and verification then defaults off because an arbitrary dist may be unsigned."
 
 [[params.repos]]
   name = "zbk"

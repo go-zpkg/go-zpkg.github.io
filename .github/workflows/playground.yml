@@ -168,7 +168,7 @@ jobs:
       # Adding a fixture without adding it here goes red, and vice versa.
       #
       # The rest of the platform is not hidden: the docs list all 34 and they
-      # install with `pkgx --platform wasip1/wasm` for a local wasmtime.
+      # install with `zpkgx --platform wasip1/wasm` for a local wasmtime.
       - name: stage the wasip1/wasm modules
         working-directory: tools/wasmstage
         env:
