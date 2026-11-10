@@ -5,7 +5,7 @@
 # that fires on a push to THIS one cannot see the event that changes the
 # answer. tools/versioncheck's header makes exactly this argument about
 # version pins, and lost a week to it: on 2026-10-04 the site told visitors to
-# install pkgm v0.1.4 and pkgx v0.1.5 while the releases were v0.1.7 and
+# install zpkgm v0.1.4 and zpkgx v0.1.5 while the releases were v0.1.7 and
 # v0.1.10, and nothing anywhere said so. A hand-typed list of seven projects
 # would rot the same way, which is why `wasmstage -derive` asks the published
 # catalogue instead of reading a list out of this file.
