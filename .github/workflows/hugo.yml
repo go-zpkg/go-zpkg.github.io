@@ -93,7 +93,7 @@ jobs:
       # The names are NOT hand-maintained: `tools/playground` has
       # TestTheStagedProjectsAreTheConfrontedOnes, which parses this file and
       # requires this list to equal the fixtures the confrontation runs. The
-      # full platform is in the docs and installable with `pkgx`; the
+      # full platform is in the docs and installable with `zpkgx`; the
       # playground is the confronted subset on purpose.
       - name: Stage the wasip1/wasm playground modules
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
