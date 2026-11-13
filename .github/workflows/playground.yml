@@ -1,7 +1,7 @@
 # Stage the registry's wasip1/wasm modules and publish the site carrying them.
 #
 # ⛔ SCHEDULED, NOT ON PUSH, and that is the whole point. A new wasip1/wasm
-# bottle is published in go-zpkg/packages — a DIFFERENT repository — so a job
+# artifact is published in go-zpkg/packages — a DIFFERENT repository — so a job
 # that fires on a push to THIS one cannot see the event that changes the
 # answer. tools/versioncheck's header makes exactly this argument about
 # version pins, and lost a week to it: on 2026-10-04 the site told visitors to
@@ -104,7 +104,7 @@ jobs:
   # difference that fixes itself. A failure here turns the whole run red and
   # mails the owner, which is the signal; the modules still refresh.
   confront:
-    name: the catalogue agrees with the factory that builds the bottles
+    name: the catalogue agrees with the factory that builds the artifacts
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
@@ -149,7 +149,7 @@ jobs:
       # ⛔ THIS SAID `-derive`, AND THE MEASUREMENT CHANGED THE ANSWER.
       #
       # The argument for deriving was rot: a list of seven typed into a file
-      # goes stale when the eighth bottle is published in another repository.
+      # goes stale when the eighth artifact is published in another repository.
       # That argument is still correct, and `wasmstage -derive` still exists
       # and is still how you find out what the platform holds.
       #
@@ -185,7 +185,7 @@ jobs:
       # static/ is copied into public/ verbatim, so the modules staged above
       # are served same-origin -- which is the entire reason they are staged
       # at all: ghcr.io sends no access-control-allow-origin, so a page
-      # fetching a bottle directly fails in every browser and in no test.
+      # fetching an artifact directly fails in every browser and in no test.
       - name: Build
         env:
           HUGO_ENVIRONMENT: production

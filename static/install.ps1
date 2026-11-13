@@ -206,7 +206,7 @@ try {
     }
     'mirror' {
       Write-Host 'Done. Next:  mirror agwa.name/git-crypt --dest ./m'
-      Write-Host '(mirrors pkgx bottles for local/offline serving)'
+      Write-Host '(mirrors pkgx artifacts for local/offline serving)'
     }
     default {
       Write-Host "${Tool}-install: no next step known for $Tool - the validation above and this list have drifted apart."

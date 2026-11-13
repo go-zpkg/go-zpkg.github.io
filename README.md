@@ -11,7 +11,7 @@ whose repo cards are drawn from `[[params.repos]]` in `hugo.toml`.
 ## The playground, at `/playground/`
 
 `content/playground.md` + `layouts/_default/playground.html` + `static/playground/`
-run the factory's `wasip1/wasm` bottles **in the reader's browser**: `wasi.js` is a
+run the factory's `wasip1/wasm` artifacts **in the reader's browser**: `wasi.js` is a
 WASI preview1 host, `presets.js` holds one proven command line per module, and
 `app.js` is the page.
 

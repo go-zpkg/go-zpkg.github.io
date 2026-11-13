@@ -1,4 +1,4 @@
-// Confrontation: the DERIVED list against the factory that builds the bottles.
+// Confrontation: the DERIVED list against the factory that builds the artifacts.
 //
 // # Why parsing the catalogue is not enough
 //
@@ -32,9 +32,9 @@
 // The discriminator below settles it: wasip1-c.yml has listed simdjson since
 // 2026-10-26 19:35 (go-zpkg/packages#377), four days BEFORE that catalogue was
 // generated, so this is not a lane that moved after the snapshot. And the
-// bottle is there — a pinned `wasmstage … github.com/simdjson/simdjson`
+// artifact is there — a pinned `wasmstage … github.com/simdjson/simdjson`
 // installs v5.0.5 and stages 432 531 bytes that pass the \0asm check. So the
-// bottle is published, the catalogue does not list it, and the gap is in the
+// artifact is published, the catalogue does not list it, and the gap is in the
 // catalogue builder.
 //
 // Which is the entire argument for this file. `-derive` was correct and the
@@ -138,7 +138,7 @@ func declaredBy(url string) ([]string, error) {
 		}
 	}
 	if len(slugs) == 0 {
-		return nil, fmt.Errorf("%s declares no matrix slug — the file was read and understood as nothing, which cannot be right for a lane that publishes bottles; the workflow's shape has probably changed", url)
+		return nil, fmt.Errorf("%s declares no matrix slug — the file was read and understood as nothing, which cannot be right for a lane that publishes artifacts; the workflow's shape has probably changed", url)
 	}
 	sort.Strings(slugs)
 	return slugs, nil
@@ -241,7 +241,7 @@ func TestTheDerivedListMatchesWhatTheFactoryBuilds(t *testing.T) {
 		fmt.Fprintf(&b, "  Two explanations, and the catalogue's timestamp above tells them apart:\n")
 		fmt.Fprintf(&b, "   - the lane added it AFTER that timestamp. Benign; the next weekly catalogue\n")
 		fmt.Fprintf(&b, "     run picks it up, and the playground is one week behind until then.\n")
-		fmt.Fprintf(&b, "   - the lane has been building it since BEFORE that timestamp. Then the bottle\n")
+		fmt.Fprintf(&b, "   - the lane has been building it since BEFORE that timestamp. Then the artifact\n")
 		fmt.Fprintf(&b, "     or its catalogue entry is missing, and the playground is silently short a\n")
 		fmt.Fprintf(&b, "     project — which is the failure this test was written for.\n")
 	}

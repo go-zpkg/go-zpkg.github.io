@@ -4,17 +4,17 @@
 // # Why a staging step exists at all
 //
 // ⛔ ghcr.io DOES NOT DO CORS, so a page served from go-zpkg.github.io cannot
-// pull a bottle from it. Measured 2026-10-29:
+// pull an artifact from it. Measured 2026-10-29:
 //
 //	GET  /token?scope=…        200, and no access-control-allow-origin
 //	OPTIONS /v2/…/manifests/…  405, and no CORS headers at all
 //
-// A playground that fetched bottles directly would fail in the browser and
+// A playground that fetched artifacts directly would fail in the browser and
 // work in every test written outside one. So the fetching happens HERE, in
 // CI, with a Go client that has no such restriction, and GitHub Pages then
 // serves the result same-origin.
 //
-// ⛔ AND IT STAGES THE MODULE, NOT THE BOTTLE. The C lane publishes
+// ⛔ AND IT STAGES THE MODULE, NOT THE ARTIFACT. The C lane publishes
 // `.tar.zst`; a browser's DecompressionStream does gzip and deflate, and zstd
 // is not universally available. Extracting `bin/<name>.wasm` here leaves the
 // page with one `fetch` and an `instantiateStreaming`, no tar reader and no
@@ -27,7 +27,7 @@
 // exists in this very repository because the install section named zpkgm v0.1.4
 // and zpkgx v0.1.5 while the releases were v0.1.7 and v0.1.10: nobody mistyped
 // anything, the world moved and the file did not. Seven project names typed
-// into a workflow are the same object. The eighth wasip1/wasm bottle will be
+// into a workflow are the same object. The eighth wasip1/wasm artifact will be
 // published in go-zpkg/packages — a DIFFERENT repository — and a list living
 // here would go on naming seven with nothing anywhere going red.
 //
@@ -72,12 +72,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-zpkg/bottle"
+	"github.com/go-zpkg/artifact"
 )
 
 // The one platform this command is about. Named rather than repeated, because
 // the manifest, the pick and the install all have to agree: staging a
-// host-architecture bottle into a web page is the single mistake that would
+// host-architecture artifact into a web page is the single mistake that would
 // look fine until somebody opened the page.
 const (
 	stageOS   = "wasip1"
@@ -86,27 +86,27 @@ const (
 
 // Seams, so the whole command is drivable without a network.
 var (
-	stagePick    = bottle.PickVersionFor
-	stageInstall = bottle.InstallFor
+	stagePick    = artifact.PickVersionFor
+	stageInstall = artifact.InstallFor
 	stageTempDir = os.MkdirTemp
 	stageCatalog = fetchCatalog
 )
 
 // fetchCatalog pulls the published catalogue for one platform.
 //
-// It goes through bottle.FetchCatalog rather than reading the layer itself,
+// It goes through artifact.FetchCatalog rather than reading the layer itself,
 // because that path VERIFIES the catalogue's signature. A catalogue is "only a
 // list of names" right up to the moment something installs what it names —
 // here, unattended, in CI.
-func fetchCatalog(osn, arch string) (bottle.Catalog, error) {
-	c, err := bottle.NewOCIClient(bottle.DistBase)
+func fetchCatalog(osn, arch string) (artifact.Catalog, error) {
+	c, err := artifact.NewOCIClient(artifact.DistBase)
 	if err != nil {
-		return bottle.Catalog{}, err
+		return artifact.Catalog{}, err
 	}
-	return bottle.FetchCatalog(c, osn, arch)
+	return artifact.FetchCatalog(c, osn, arch)
 }
 
-// derive asks the published catalogue which projects ship a bottle for this
+// derive asks the published catalogue which projects ship an artifact for this
 // platform.
 //
 // ⛔ THE TEST IS A NON-EMPTY Versions, NOT A MATCH ON Platforms. The catalogue
@@ -121,10 +121,10 @@ func derive(osn, arch string) ([]string, error) {
 	}
 	var projects []string
 	for _, p := range cat.Projects {
-		// The catalogue publishes itself as an ordinary bottle. It is a
+		// The catalogue publishes itself as an ordinary artifact. It is a
 		// list of names, not a wasm module, and staging it would be
 		// staging the question.
-		if p.Project == bottle.CatalogProjectName || len(p.Versions) == 0 {
+		if p.Project == artifact.CatalogProjectName || len(p.Versions) == 0 {
 			continue
 		}
 		projects = append(projects, p.Project)
@@ -142,7 +142,7 @@ var errNoFallback = errors.New(`there is deliberately NO built-in project list t
   a page quietly showing last month's set is indistinguishable from a current one,
   while a run that stops says what it could not ask -- the same reason
   tools/versioncheck exists rather than a comment asking people to check the pins.
-  The catalogue is published weekly by go-zpkg/packages as ` + bottle.CatalogProjectName + `
+  The catalogue is published weekly by go-zpkg/packages as ` + artifact.CatalogProjectName + `
   for ` + stageOS + `/` + stageArch + `; before that job has run once, this is what "platform not in
   index" looks like, and the answer is to wait for it, not to invent a list`)
 
@@ -228,14 +228,14 @@ func run(args []string, stdout, stderr io.Writer) int {
 		defer os.RemoveAll(dir)
 	}
 
-	// ⛔ EACH PROJECT'S OWN BOTTLE, NOT ITS CLOSURE — and this was wrong the
+	// ⛔ EACH PROJECT'S OWN ARTIFACT, NOT ITS CLOSURE — and this was wrong the
 	// first time. Asking for the complete closure failed against the real
 	// registry on 2026-10-30:
 	//
 	//	no version of gnu.org/readline satisfies "8" AND is published for
 	//	wasip1/wasm … asked for by 8 (sqlite.org)
 	//
-	// sqlite.org's wasm bottle is published and its declared dependency is
+	// sqlite.org's wasm artifact is published and its declared dependency is
 	// not, so the closure cannot complete — and it does not need to. A
 	// wasm32-wasip1 module is STATICALLY LINKED: the `.wasm` carries
 	// everything it runs, and the recipe's dependencies describe the native
@@ -251,7 +251,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 			fmt.Fprintf(stderr, "wasmstage: %s: %v\n", p, err)
 			continue
 		}
-		if _, err := stageInstall(bottle.Resolved{Project: p, Version: v}, dir, stageOS, stageArch); err != nil {
+		if _, err := stageInstall(artifact.Resolved{Project: p, Version: v}, dir, stageOS, stageArch); err != nil {
 			fmt.Fprintf(stderr, "wasmstage: %s: %v\n", p, err)
 			continue
 		}
@@ -327,7 +327,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 	// current as one that is.
 	//
 	// The default is the NEWEST STAGED MODULE'S mtime, not time.Now(): those
-	// come out of the bottle archives, so two runs over the same bottles
+	// come out of the artifact archives, so two runs over the same artifacts
 	// produce the same manifest, which is what "for a reproducible run" was
 	// promising. And a zero time is a FAILURE rather than an empty string,
 	// because emitting nothing is the behaviour being fixed.

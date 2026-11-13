@@ -7,7 +7,7 @@
 // maintenance obligation, and nobody met it. On 2026-10-04 the page told
 // visitors to install zpkgm v0.1.4 and zpkgx v0.1.5 while the releases were
 // v0.1.7 and v0.1.10 — three and five behind, and both predating two directory
-// traversal fixes in the shared tar extractor (go-zpkg/bottle#106, #107). A
+// traversal fixes in the shared tar extractor (go-zpkg/artifact#106, #107). A
 // pinned example that rots does not merely go stale: it hands people an old
 // build, which is worse than the unpinned form the installer already supports.
 //

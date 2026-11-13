@@ -2,7 +2,7 @@
 //
 // These are not examples somebody thought up: go-zpkg/packages runs exactly
 // these arguments, with exactly these files and this stdin, under wasmtime
-// before it publishes the bottle — `.github/workflows/wasip1.yml` for the Go
+// before it publishes the artifact — `.github/workflows/wasip1.yml` for the Go
 // lane and `wasip1-c.yml` for the C and C++ one. A default the page invented
 // would be a guess about somebody else's command line, and the first person to
 // press Run would be the one who found out.
