@@ -160,7 +160,7 @@ func (c *Case) materialise(dir string) ([]byte, error) {
 // RunWasmtime runs one case under the reference implementation.
 //
 // The flags are the ones go-zpkg/packages' wasip1.yml and wasip1-c.yml use to
-// prove a bottle before publishing it: the filesystem is granted explicitly
+// prove an artifact before publishing it: the filesystem is granted explicitly
 // (WASI has no ambient one) and $PWD tells Go's wasip1 runtime which preopen
 // the working directory is in. `--argv0` is added here, and only here, so the
 // recorded output cannot contain the path this ran from.

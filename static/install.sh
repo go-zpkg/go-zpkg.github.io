@@ -226,7 +226,7 @@ case "$tool" in
     ;;
   mirror)
     printf '\nDone. Next:  mirror agwa.name/git-crypt --dest ./m\n' >&2
-    printf '(mirrors pkgx bottles for local/offline serving)\n' >&2
+    printf '(mirrors pkgx artifacts for local/offline serving)\n' >&2
     ;;
   *)
     printf '\n%s-install: no next step known for %s — the validation above and\n' "$tool" "$tool" >&2

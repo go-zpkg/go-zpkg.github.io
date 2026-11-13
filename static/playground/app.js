@@ -2,7 +2,7 @@
 // arguments and its input, run it here, read what it printed.
 //
 // ⛔ IT NEVER TALKS TO A REGISTRY. ghcr.io sends no CORS headers, so a page
-// that fetched a bottle would fail in every browser and pass in every test
+// that fetched a artifact would fail in every browser and pass in every test
 // written outside one. Everything below is same-origin, written by
 // tools/wasmstage in CI.
 //

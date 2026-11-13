@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-zpkg/bottle"
+	"github.com/go-zpkg/artifact"
 )
 
 // wasmModule is the smallest thing debug-free tooling and a browser both
@@ -30,21 +30,21 @@ func write(t *testing.T, path string, body []byte) {
 
 // withSeams replaces the pick, the install and the temp dir, so the command
 // runs with no network. Both the pick and the install assert the platform,
-// because staging a host-architecture bottle into a web page is the one
+// because staging a host-architecture artifact into a web page is the one
 // mistake that would look fine until somebody opened it.
 func withSeams(t *testing.T, err error, stage func(dir string)) {
 	t.Helper()
 	pp, pi, pt := stagePick, stageInstall, stageTempDir
-	stagePick = func(project, constraint, osn, arch string) (bottle.Ver, error) {
+	stagePick = func(project, constraint, osn, arch string) (artifact.Ver, error) {
 		if osn != "wasip1" || arch != "wasm" {
 			t.Errorf("picked for %s/%s, want wasip1/wasm", osn, arch)
 		}
 		if err != nil {
-			return bottle.Ver{}, err
+			return artifact.Ver{}, err
 		}
-		return bottle.ParseVer("1.0.0"), nil
+		return artifact.ParseVer("1.0.0"), nil
 	}
-	stageInstall = func(_ bottle.Resolved, dir, osn, arch string) (bool, error) {
+	stageInstall = func(_ artifact.Resolved, dir, osn, arch string) (bool, error) {
 		if osn != "wasip1" || arch != "wasm" {
 			t.Errorf("installed for %s/%s, want wasip1/wasm", osn, arch)
 		}
@@ -167,7 +167,7 @@ func TestTheBudgetRefusesAndDoesNotTruncate(t *testing.T) {
 }
 
 // The shape it exists for: the seven projects the wasip1 lanes publish, here
-// reduced to two, staged out of a bottle store into files a page can fetch.
+// reduced to two, staged out of an artifact store into files a page can fetch.
 func TestItStagesTheModulesAndWritesAManifest(t *testing.T) {
 	out := t.TempDir()
 	store := t.TempDir()
@@ -313,13 +313,13 @@ func TestOneProjectThatCannotBePickedDoesNotStopTheOthers(t *testing.T) {
 	out := t.TempDir()
 	store := t.TempDir()
 	pp, pi, pt := stagePick, stageInstall, stageTempDir
-	stagePick = func(project, _, _, _ string) (bottle.Ver, error) {
+	stagePick = func(project, _, _, _ string) (artifact.Ver, error) {
 		if project == "absent.org" {
-			return bottle.Ver{}, errors.New("no version is published for wasip1/wasm")
+			return artifact.Ver{}, errors.New("no version is published for wasip1/wasm")
 		}
-		return bottle.ParseVer("1.0.0"), nil
+		return artifact.ParseVer("1.0.0"), nil
 	}
-	stageInstall = func(bottle.Resolved, string, string, string) (bool, error) { return true, nil }
+	stageInstall = func(artifact.Resolved, string, string, string) (bool, error) { return true, nil }
 	t.Cleanup(func() { stagePick, stageInstall, stageTempDir = pp, pi, pt })
 	write(t, filepath.Join(store, "has.org/v1.0.0/bin/x.wasm"), wasmModule)
 
@@ -367,10 +367,10 @@ func TestTheVersionIsReadAfterTheWholeProjectName(t *testing.T) {
 
 // withCatalog replaces the catalogue fetch, asserting the platform on the way
 // through for the same reason the pick and the install do.
-func withCatalog(t *testing.T, cat bottle.Catalog, err error) {
+func withCatalog(t *testing.T, cat artifact.Catalog, err error) {
 	t.Helper()
 	prev := stageCatalog
-	stageCatalog = func(osn, arch string) (bottle.Catalog, error) {
+	stageCatalog = func(osn, arch string) (artifact.Catalog, error) {
 		if osn != stageOS || arch != stageArch {
 			t.Errorf("asked for the %s/%s catalogue, want %s/%s", osn, arch, stageOS, stageArch)
 		}
@@ -379,20 +379,20 @@ func withCatalog(t *testing.T, cat bottle.Catalog, err error) {
 	t.Cleanup(func() { stageCatalog = prev })
 }
 
-// The shape -derive exists for: the list comes off the catalogue, so a bottle
+// The shape -derive exists for: the list comes off the catalogue, so an artifact
 // published in ANOTHER repository arrives here without anybody editing a file.
 func TestDeriveTakesTheProjectListFromTheCatalogue(t *testing.T) {
 	out := t.TempDir()
 	store := t.TempDir()
 	withSeams(t, nil, nil)
-	withCatalog(t, bottle.Catalog{Projects: []bottle.CatalogProject{
+	withCatalog(t, artifact.Catalog{Projects: []artifact.CatalogProject{
 		// Out of order on purpose: the staged list is sorted, so a diff
 		// of the manifest reads.
 		{Project: "sqlite.org", Versions: []string{"3.53.4"}},
 		{Project: "lua.org", Versions: []string{"5.4.9"}},
-		// The catalogue publishes ITSELF as an ordinary bottle. It is the
+		// The catalogue publishes ITSELF as an ordinary artifact. It is the
 		// question, not an answer.
-		{Project: bottle.CatalogProjectName, Versions: []string{"1"}},
+		{Project: artifact.CatalogProjectName, Versions: []string{"1"}},
 		// Named by the pantry, nothing published here: CatalogProject
 		// documents an empty Versions as exactly that.
 		{Project: "unpublished.org"},
@@ -407,7 +407,7 @@ func TestDeriveTakesTheProjectListFromTheCatalogue(t *testing.T) {
 	if !strings.Contains(stdout, "derived 2 project(s)") {
 		t.Errorf("the derived list was not shown:\n%s", stdout)
 	}
-	for _, unwanted := range []string{bottle.CatalogProjectName, "unpublished.org"} {
+	for _, unwanted := range []string{artifact.CatalogProjectName, "unpublished.org"} {
 		if strings.Contains(stdout, unwanted) {
 			t.Errorf("%s should not be in the derived list:\n%s", unwanted, stdout)
 		}
@@ -425,7 +425,7 @@ func TestDeriveTakesTheProjectListFromTheCatalogue(t *testing.T) {
 func TestACatalogueItCannotReadIsAFailureNotABuiltInList(t *testing.T) {
 	out := t.TempDir()
 	withSeams(t, nil, nil)
-	withCatalog(t, bottle.Catalog{}, errors.New("the index has 3 entry(ies) and none of them is wasip1/wasm"))
+	withCatalog(t, artifact.Catalog{}, errors.New("the index has 3 entry(ies) and none of them is wasip1/wasm"))
 
 	code, stdout, errb := drive(t, "-out", out, "-store", t.TempDir(), "-derive")
 	if code != 1 {
@@ -458,7 +458,7 @@ func TestACatalogueItCannotReadIsAFailureNotABuiltInList(t *testing.T) {
 // same failure wearing a different hat.
 func TestACatalogueWithNothingPublishedHereIsAFailure(t *testing.T) {
 	withSeams(t, nil, nil)
-	withCatalog(t, bottle.Catalog{Projects: []bottle.CatalogProject{
+	withCatalog(t, artifact.Catalog{Projects: []artifact.CatalogProject{
 		{Project: "named.org"}, {Project: "also-named.org"},
 	}}, nil)
 	code, _, errb := drive(t, "-out", t.TempDir(), "-store", t.TempDir(), "-derive")
@@ -475,7 +475,7 @@ func TestACatalogueWithNothingPublishedHereIsAFailure(t *testing.T) {
 // is how a pinned reproduction quietly becomes a sweep.
 func TestDeriveAndAnExplicitListAreNotMixed(t *testing.T) {
 	withSeams(t, nil, nil)
-	withCatalog(t, bottle.Catalog{Projects: []bottle.CatalogProject{
+	withCatalog(t, artifact.Catalog{Projects: []artifact.CatalogProject{
 		{Project: "lua.org", Versions: []string{"5.4.9"}},
 	}}, nil)
 	code, _, errb := drive(t, "-out", t.TempDir(), "-derive", "sqlite.org")
@@ -494,9 +494,9 @@ func TestAPinnedRunDoesNotConsultTheCatalogue(t *testing.T) {
 	store := t.TempDir()
 	withSeams(t, nil, nil)
 	prev := stageCatalog
-	stageCatalog = func(string, string) (bottle.Catalog, error) {
+	stageCatalog = func(string, string) (artifact.Catalog, error) {
 		t.Error("a pinned run asked the catalogue")
-		return bottle.Catalog{}, nil
+		return artifact.Catalog{}, nil
 	}
 	t.Cleanup(func() { stageCatalog = prev })
 	write(t, filepath.Join(store, "lua.org/v5.4.9/bin/lua.wasm"), wasmModule)
