@@ -1,24 +1,24 @@
 #!/bin/sh
-# go-zpkg installer — the pure-Go pkgx family (zpkgm, zpkgx, zpkgs, mirror).
+# go-zpkg installer — the pure-Go pkgx family (zpkm, zpkx, zpks, mirror).
 #
-#   curl -fsSL https://go-zpkg.github.io/install.sh | sh -s -- zpkgm v0.10.0
-#   curl -fsSL https://go-zpkg.github.io/install.sh | sh -s -- zpkgm latest
-#   curl -fsSL https://go-zpkg.github.io/install.sh | sh            # zpkgm, latest
-#   curl -fsSL https://go-zpkg.github.io/install.sh | sh -s -- zpkgx # another tool
+#   curl -fsSL https://go-zpkg.github.io/install.sh | sh -s -- zpkm v0.10.0
+#   curl -fsSL https://go-zpkg.github.io/install.sh | sh -s -- zpkm latest
+#   curl -fsSL https://go-zpkg.github.io/install.sh | sh            # zpkm, latest
+#   curl -fsSL https://go-zpkg.github.io/install.sh | sh -s -- zpkx # another tool
 #
-# Selects one of {zpkgm, zpkgx, zpkgs, mirror}, downloads its static,
+# Selects one of {zpkm, zpkx, zpks, mirror}, downloads its static,
 # dependency-free binary for your os/arch from a GitHub release, verifies it
 # against the release SHA256SUMS, and installs it. Idempotent: re-running is
 # the updater — it resolves the target version and skips the download if that
 # version is already installed (so `curl … | sh` on a cron is a safe
 # self-update).
 #
-# Tool selection (default: zpkgm, so the bare one-liner installs the installer):
-#   sh -s -- <tool>   positional argument (zpkgm | zpkgx | zpkgs | mirror)
+# Tool selection (default: zpkm, so the bare one-liner installs the installer):
+#   sh -s -- <tool>   positional argument (zpkm | zpkx | zpks | mirror)
 #
-# zpkgx and zpkgs are the two halves of one program and ship from ONE release:
-# zpkgx RUNS a package, zpkgs ANSWERS about one (ls, search, why, catalog,
-# store, browse, compat, env, completion). Install both, or zpkgs's verbs
+# zpkx and zpks are the two halves of one program and ship from ONE release:
+# zpkx RUNS a package, zpks ANSWERS about one (ls, search, why, catalog,
+# store, browse, compat, env, completion). Install both, or zpks's verbs
 # have nowhere to go.
 #   ZPKG_TOOL=<tool>  environment variable (or TOOL=<tool>)
 #
@@ -32,7 +32,7 @@
 #                            `| sh` has always done, and existing pipelines
 #                            keep doing)
 #
-# Env knobs (per-tool prefix, e.g. ZPKGM_*, ZPKGX_*, MIRROR_*; a tool-agnostic
+# Env knobs (per-tool prefix, e.g. ZPKM_*, ZPKGX_*, MIRROR_*; a tool-agnostic
 # TOOL_* is honoured as a fallback):
 #   <TOOL>_INSTALL / TOOL_INSTALL   install directory (default: $HOME/.local/bin)
 #   <TOOL>_VERSION / TOOL_VERSION   install a specific version (e.g. v0.1.0 or
@@ -55,28 +55,28 @@ set -eu
 # from `go-zpkg/<tool>`, an organisation that now holds no repositories at all.
 # A rule table could not see it: the repository name is ASSEMBLED at run time
 # from a variable, and there is no string `go-zpkg/pkgm` anywhere to match.
-tool="${1:-${ZPKG_TOOL:-${TOOL:-zpkgm}}}"
+tool="${1:-${ZPKG_TOOL:-${TOOL:-zpkm}}}"
 case "$tool" in
-  zpkgm|zpkgx|zpkgs|mirror) ;;
-  *) printf 'go-zpkg-install: unknown tool %s (choose one of: zpkgm, zpkgx, zpkgs, mirror)\n' "'$tool'" >&2; exit 1 ;;
+  zpkm|zpkx|zpks|mirror) ;;
+  *) printf 'go-zpkg-install: unknown tool %s (choose one of: zpkm, zpkx, zpks, mirror)\n' "'$tool'" >&2; exit 1 ;;
 esac
 tool_upper=$(printf '%s' "$tool" | tr '[:lower:]' '[:upper:]')
 
 # ⛔ THE REPOSITORY IS NOT ALWAYS THE TOOL'S NAME. Three of the four are
-# their own repository; `zpkgs` ships from go-zpkg/zpkgx, because it is the
-# other half of the same program — zpkgx runs packages, zpkgs answers about
+# their own repository; `zpks` ships from go-zpkg/zpkx, because it is the
+# other half of the same program — zpkx runs packages, zpks answers about
 # them, and they share one resolver. Deriving the repo from the tool name
-# alone would have fetched from go-zpkg/zpkgs, which does not exist, and the
+# alone would have fetched from go-zpkg/zpks, which does not exist, and the
 # failure a user would see is a 404 on a release rather than "that is not
 # where it lives".
 case "$tool" in
-  zpkgs) REPO="go-zpkg/zpkgx" ;;
+  zpks) REPO="go-zpkg/zpkx" ;;
   *)     REPO="go-zpkg/${tool}" ;;
 esac
 
 err() { printf '%s-install: %s\n' "$tool" "$1" >&2; exit 1; }
 
-# Resolve a per-tool env knob: <TOOL_UPPER>_<SUFFIX> first (so ZPKGM_VERSION,
+# Resolve a per-tool env knob: <TOOL_UPPER>_<SUFFIX> first (so ZPKM_VERSION,
 # ZPKG_FORCE, MIRROR_INSTALL keep working), then a tool-agnostic TOOL_<SUFFIX>.
 tool_env() {
   # shellcheck disable=SC2154  # 'v' is assigned inside the eval'd expression
@@ -210,19 +210,19 @@ esac
 # gives a user no way to notice. Leaving `pkgm)` here after the rename would
 # have done exactly that.
 case "$tool" in
-  zpkgm)
-    printf '\nDone. Next:  zpkgm install lz4.org\n' >&2
+  zpkm)
+    printf '\nDone. Next:  zpkm install lz4.org\n' >&2
     printf '(installs verify against the signed registry by default)\n' >&2
     ;;
-  zpkgx)
-    printf '\nDone. Next:  zpkgx node@22 --version\n' >&2
+  zpkx)
+    printf '\nDone. Next:  zpkx node@22 --version\n' >&2
     printf '(runs packages on the fly; verifies against the signed registry by default)\n' >&2
-    printf 'To ask ABOUT packages, install its other half:  … | sh -s -- zpkgs\n' >&2
+    printf 'To ask ABOUT packages, install its other half:  … | sh -s -- zpks\n' >&2
     ;;
-  zpkgs)
-    printf '\nDone. Next:  zpkgs catalog update  &&  zpkgs search rg\n' >&2
+  zpks)
+    printf '\nDone. Next:  zpks catalog update  &&  zpks search rg\n' >&2
     printf '(answers about packages — ls, search, why, store, browse, env)\n' >&2
-    printf 'To RUN one, install its other half:  … | sh -s -- zpkgx\n' >&2
+    printf 'To RUN one, install its other half:  … | sh -s -- zpkx\n' >&2
     ;;
   mirror)
     printf '\nDone. Next:  mirror agwa.name/git-crypt --dest ./m\n' >&2

@@ -5,7 +5,7 @@
 // should name a version: "a line copied today and the same line copied in six
 // months install the same bytes". That is a good argument and it is also a
 // maintenance obligation, and nobody met it. On 2026-10-04 the page told
-// visitors to install zpkgm v0.1.4 and zpkgx v0.1.5 while the releases were
+// visitors to install zpkm v0.1.4 and zpkx v0.1.5 while the releases were
 // v0.1.7 and v0.1.10 — three and five behind, and both predating two directory
 // traversal fixes in the shared tar extractor (go-zpkg/artifact#106, #107). A
 // pinned example that rots does not merely go stale: it hands people an old
@@ -53,34 +53,34 @@ type pin struct {
 //
 // ⛔ BOTH EXPRESSIONS MOVED WITH THE RENAME, AND THE SECOND ONE IS THE TRAP.
 // The positional names were rewritten with everything else, but the env-var
-// prefixes are SHOUTED — `PKGM_VERSION` shares no text with `zpkgm` — so a
+// prefixes are SHOUTED — `PKGM_VERSION` shares no text with `zpkm` — so a
 // pass over the tool names leaves them untouched and nothing says so. A
-// `$env:ZPKGM_VERSION='v0.9.0'` line that no pattern matches is a pinned
+// `$env:ZPKM_VERSION='v0.9.0'` line that no pattern matches is a pinned
 // install command NOTHING TRACKS: never reported behind, which looks exactly
 // like being current. That is the failure this whole tool exists to prevent,
 // so it must not be the failure the tool itself ships with.
 var (
-	rePositional = regexp.MustCompile(`\b(zpkgm|zpkgx|zpkgs|mirror)\s+(v\d+\.\d+\.\d+)\b`)
-	reEnvVar     = regexp.MustCompile(`\b(ZPKGM|ZPKGX|ZPKGS|MIRROR)_VERSION\s*=\s*'?(v\d+\.\d+\.\d+)'?`)
+	rePositional = regexp.MustCompile(`\b(zpkm|zpkx|zpks|mirror)\s+(v\d+\.\d+\.\d+)\b`)
+	reEnvVar     = regexp.MustCompile(`\b(ZPKM|ZPKGX|ZPKGS|MIRROR)_VERSION\s*=\s*'?(v\d+\.\d+\.\d+)'?`)
 )
 
 // repoOf is the repository a tool's releases come from.
 //
 // ⛔ IT IS NOT ALWAYS THE TOOL'S NAME, and getting that wrong fails in the
-// quieter of the two directions. `zpkgs` ships from go-zpkg/zpkgx — it is the
+// quieter of the two directions. `zpks` ships from go-zpkg/zpkx — it is the
 // other half of the same program — so asking GitHub for
-// /repos/go-zpkg/zpkgs/releases/latest would 404 and this check would call
+// /repos/go-zpkg/zpks/releases/latest would 404 and this check would call
 // the site stale about a release that does not exist.
 //
-// The other direction is worse and is why `zpkgs` had to be added to the
-// expressions above at the same time: a `zpkgs v0.22.1` line that no pattern
+// The other direction is worse and is why `zpks` had to be added to the
+// expressions above at the same time: a `zpks v0.22.1` line that no pattern
 // matches is a pinned install command NOTHING TRACKS. It would simply never
 // be reported behind, which is indistinguishable from being current — and
 // this whole tool exists because a pin that nobody watched sat eight days
 // out of date.
 func repoOf(tool string) string {
-	if tool == "zpkgs" {
-		return "zpkgx"
+	if tool == "zpks" {
+		return "zpkx"
 	}
 	return tool
 }
@@ -89,15 +89,15 @@ func repoOf(tool string) string {
 // as opposed to mentioning a version in passing.
 //
 // ⛔ WITHOUT THIS, -fix CAN REWRITE A HISTORICAL CLAIM INTO A FALSE ONE.
-// rePositional matches `zpkgx v0.16.0` anywhere in a scanned file, and
+// rePositional matches `zpkx v0.16.0` anywhere in a scanned file, and
 // layouts/index.html is prose as well as install commands. A sentence like
-// "zpkgx v0.16.0 added the name index" is a statement about the past; bumping
+// "zpkx v0.16.0 added the name index" is a statement about the past; bumping
 // its version does not keep it current, it makes it wrong — silently, and in
 // the one place a reader is most likely to trust.
 //
 // Measured on this tree the day the guard was added: all four positional
-// matches are install invocations (`| sh -s -- zpkgm v0.4.1`,
-// `.\install.ps1 zpkgx v0.16.0`), so anchoring costs nothing today. It is for
+// matches are install invocations (`| sh -s -- zpkm v0.4.1`,
+// `.\install.ps1 zpkx v0.16.0`), so anchoring costs nothing today. It is for
 // the sentence nobody has written yet — and it is what makes `-fix` safe to
 // run unattended, which is the only way this file stops going stale between
 // releases.
@@ -421,7 +421,7 @@ func fixPins(dir string, behind []pin, current map[string]string, out io.Writer)
 		// change is a disagreement between the two halves of this program,
 		// and the dangerous outcome is reporting success over it.
 		// Compared against the number of LINES, not of pins: two pins can
-		// sit on one line — `zpkgx v0.9.0` beside `ZPKGM_VERSION='v0.2.2'`
+		// sit on one line — `zpkx v0.9.0` beside `ZPKM_VERSION='v0.2.2'`
 		// is a real line on this site — and counting pins here reported a
 		// disagreement that was arithmetic rather than a missed rewrite.
 		if changed != len(want) {

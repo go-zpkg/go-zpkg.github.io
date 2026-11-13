@@ -58,7 +58,7 @@ would make the headline false for most of what a visitor can click.
 So all three staging workflows name the confronted set, `wasmstage` enforces a
 `-max-bytes` budget (48 MiB by default) that **refuses rather than truncates**,
 and the rest of the platform is in the docs and installs with
-`zpkgx --platform wasip1/wasm` for a local `wasmtime`.
+`zpkx --platform wasip1/wasm` for a local `wasmtime`.
 
 A budget that staged the first N bytes would produce a short set with a valid
 manifest and a page that renders — which is the failure
