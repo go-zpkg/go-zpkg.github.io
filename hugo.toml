@@ -61,7 +61,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   pkg = "github.com/go-zpkg/mirror"
   url = "https://github.com/go-zpkg/mirror"
   status = "ready"
-  blurb = "**Sync a local mirror** of our own signed bottles — the registry the factory publishes to, named once as `bottle.DistBase` — into the same servable tree layout, per os/arch, incremental, with `--closure` to pull a package's full runtime closure (plus the implicit `FROM scratch` system libs). Serve it statically and point zpkgm/zpkgx at it with `ZPKG_DIST=<mirror-url>`. It is **not** a dist from upstream pkgx.sh and does not synchronise from one; `--from` takes any registry you like, and verification then defaults off because an arbitrary dist may be unsigned."
+  blurb = "**Sync a local mirror** of our own signed bottles — the registry the factory publishes to, named once as `bottle.DistBase` — into the same servable tree layout, per os/arch, incremental, with `--closure` to pull a package's full runtime closure (plus the implicit `FROM scratch` system libs). Serve it statically and point zpkgm/zpkgx at it with `ZPKG_DIST=<mirror-url>`. It is **not** a dist from pkgx.sh and does not synchronise from one; `--from` takes any registry you like, and verification then defaults off because an arbitrary dist may be unsigned."
 
 [[params.repos]]
   name = "zbk"
@@ -82,7 +82,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   pkg = "github.com/go-zpkg/pantry-overlay"
   url = "https://github.com/go-zpkg/pantry-overlay"
   status = "ready"
-  blurb = "**The corrections**, consumed through `ZPKG_PANTRY_OVERLAY`: each recipe here overrides the matching upstream one and everything else falls back. It exists because an upstream recipe can be unsatisfiable against the current registry — curl, wget and git pin `openssl.org: ^1.1` while openssl is 3.x and 4.x — so without the overlay `zpkgm install` cannot resolve the closure the published bottles were actually built against."
+  blurb = "**The corrections**, consumed through `ZPKG_PANTRY_OVERLAY`: each recipe here overrides the matching pantry one and everything else falls back. It exists because a pantry recipe can be unsatisfiable against the current registry — curl, wget and git pin `openssl.org: ^1.1` while openssl is 3.x and 4.x — so without the overlay `zpkgm install` cannot resolve the closure the published bottles were actually built against."
 
 [[params.repos]]
   name = "registry-viewer"
