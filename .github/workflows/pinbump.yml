@@ -5,7 +5,7 @@
 # copied today and the same line copied in six months install the same bytes.
 # That promise is only worth keeping if somebody keeps it, and nobody did —
 # `versioncheck` was RED ON MAIN EVERY DAY from 2026-10-09 to 2026-10-17, five
-# scheduled runs in a row, because zpkgx released v0.17.0 and then v0.17.1 and
+# scheduled runs in a row, because zpkx released v0.17.0 and then v0.17.1 and
 # the two pinned lines did not move. A check that fails daily and is fixed by
 # hand teaches people to ignore it.
 #

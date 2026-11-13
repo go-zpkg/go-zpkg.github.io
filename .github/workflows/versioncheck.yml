@@ -3,8 +3,8 @@
 # SCHEDULED on purpose. The site builds on push to this repository and on pull
 # requests, and a release is published in a DIFFERENT repository — so a check
 # that runs only on those events cannot see the one thing that makes the answer
-# change. On 2026-10-04 the install section told visitors to install zpkgm
-# v0.1.4 and zpkgx v0.1.5 -- both still spelled without the z at that date --
+# change. On 2026-10-04 the install section told visitors to install zpkm
+# v0.1.4 and zpkx v0.1.5 -- both still spelled without the z at that date --
 # while the releases were v0.1.7 and v0.1.10, and nothing anywhere said so.
 name: versions on the site match their releases
 
@@ -52,7 +52,7 @@ jobs:
         # that runner -- while this workflow runs on every pull request and
         # every push as well as its daily cron. It went red with
         #
-        #     versioncheck: zpkgm: GET releases/latest: 403 Forbidden
+        #     versioncheck: zpkm: GET releases/latest: 403 Forbidden
         #
         # printed where the list of stale pins goes, which reads as "a version
         # is out of date" when in fact nothing was compared at all.

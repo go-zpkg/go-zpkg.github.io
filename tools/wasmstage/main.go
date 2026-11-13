@@ -24,8 +24,8 @@
 // # Why the project list is DERIVED, not typed
 //
 // ⛔ A HAND-TYPED LIST DRIFTS EXACTLY LIKE A VERSION PIN. `tools/versioncheck`
-// exists in this very repository because the install section named zpkgm v0.1.4
-// and zpkgx v0.1.5 while the releases were v0.1.7 and v0.1.10: nobody mistyped
+// exists in this very repository because the install section named zpkm v0.1.4
+// and zpkx v0.1.5 while the releases were v0.1.7 and v0.1.10: nobody mistyped
 // anything, the world moved and the file did not. Seven project names typed
 // into a workflow are the same object. The eighth wasip1/wasm artifact will be
 // published in go-zpkg/packages — a DIFFERENT repository — and a list living

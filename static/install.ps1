@@ -1,33 +1,33 @@
 <#
 .SYNOPSIS
-  go-zpkg installer for Windows — the pure-Go pkgx family (zpkgm, zpkgx, zpkgs, mirror).
+  go-zpkg installer for Windows — the pure-Go pkgx family (zpkm, zpkx, zpks, mirror).
 
 .DESCRIPTION
   Run:
 
-      $env:ZPKGM_VERSION='v0.10.0'; irm https://go-zpkg.github.io/install.ps1 | iex
-      irm https://go-zpkg.github.io/install.ps1 | iex                 # zpkgm, latest
-      $env:ZPKG_TOOL='zpkgx'; irm https://go-zpkg.github.io/install.ps1 | iex
+      $env:ZPKM_VERSION='v0.10.0'; irm https://go-zpkg.github.io/install.ps1 | iex
+      irm https://go-zpkg.github.io/install.ps1 | iex                 # zpkm, latest
+      $env:ZPKG_TOOL='zpkx'; irm https://go-zpkg.github.io/install.ps1 | iex
 
   A piped script takes no arguments, so on Windows the version is pinned with
   the environment variable above. Saved to disk, both are positional:
 
-      .\install.ps1 zpkgx v0.39.0
-      .\install.ps1 zpkgs v0.39.0
-      .\install.ps1 zpkgx latest
+      .\install.ps1 zpkx v0.39.0
+      .\install.ps1 zpks v0.39.0
+      .\install.ps1 zpkx latest
 
-  Selects one of {zpkgm, zpkgx, zpkgs, mirror}, downloads its static <tool>.exe
+  Selects one of {zpkm, zpkx, zpks, mirror}, downloads its static <tool>.exe
   for your architecture from a GitHub release, verifies it against the release
   SHA256SUMS, installs it to $env:LOCALAPPDATA\Programs\go-zpkg, and adds that
   directory to the user PATH. Idempotent: re-running is the updater — it
   resolves the target version and skips the download if that version is already
   installed.
 
-  Tool selection (default: zpkgm):
-    .\install.ps1 <tool>   positional argument (zpkgm | zpkgx | zpkgs | mirror)
+  Tool selection (default: zpkm):
+    .\install.ps1 <tool>   positional argument (zpkm | zpkx | zpks | mirror)
     $env:ZPKG_TOOL=<tool>  environment variable (or $env:TOOL=<tool>)
 
-  Env knobs (per-tool prefix ZPKGM_*, ZPKGX_*, MIRROR_*; a tool-agnostic TOOL_*
+  Env knobs (per-tool prefix ZPKM_*, ZPKGX_*, MIRROR_*; a tool-agnostic TOOL_*
   is honoured as a fallback):
     <TOOL>_INSTALL / TOOL_INSTALL   install directory (default:
                                     $env:LOCALAPPDATA\Programs\go-zpkg)
@@ -55,25 +55,25 @@ $ErrorActionPreference = 'Stop'
 if (-not $Tool) {
   if ($env:ZPKG_TOOL)  { $Tool = $env:ZPKG_TOOL }
   elseif ($env:TOOL)   { $Tool = $env:TOOL }
-  else                 { $Tool = 'zpkgm' }
+  else                 { $Tool = 'zpkm' }
 }
-if ($Tool -notin @('zpkgm', 'zpkgx', 'zpkgs', 'mirror')) {
-  Write-Error "go-zpkg-install: unknown tool '$Tool' (choose one of: zpkgm, zpkgx, zpkgs, mirror)"
+if ($Tool -notin @('zpkm', 'zpkx', 'zpks', 'mirror')) {
+  Write-Error "go-zpkg-install: unknown tool '$Tool' (choose one of: zpkm, zpkx, zpks, mirror)"
   exit 1
 }
 $toolUpper = $Tool.ToUpper()
-# The repository is not always the tool's name: zpkgs ships from go-zpkg/zpkgx,
+# The repository is not always the tool's name: zpks ships from go-zpkg/zpkx,
 # because it is the other half of the same program. Deriving it from the name
 # alone would 404 on a release that does not exist, and read as "there is no
 # such version" rather than "that is not where it lives".
-$repo = if ($Tool -eq 'zpkgs') { 'go-zpkg/zpkgx' } else { "go-zpkg/$Tool" }
+$repo = if ($Tool -eq 'zpks') { 'go-zpkg/zpkx' } else { "go-zpkg/$Tool" }
 
 function Fail([string]$msg) {
   Write-Error "${Tool}-install: $msg"
   exit 1
 }
 
-# Resolve a per-tool env knob: <TOOL_UPPER>_<SUFFIX> first (so ZPKGM_VERSION,
+# Resolve a per-tool env knob: <TOOL_UPPER>_<SUFFIX> first (so ZPKM_VERSION,
 # ZPKG_FORCE, MIRROR_INSTALL keep working), then a tool-agnostic TOOL_<SUFFIX>.
 function Get-ToolEnv([string]$suffix) {
   $v = [Environment]::GetEnvironmentVariable("${toolUpper}_$suffix")
@@ -190,19 +190,19 @@ try {
   # here is unreachable and fails by printing NOTHING — the one failure mode an
   # `irm | iex` one-liner gives a user no way to notice.
   switch ($Tool) {
-    'zpkgm' {
-      Write-Host 'Done. Next:  zpkgm install lz4.org'
+    'zpkm' {
+      Write-Host 'Done. Next:  zpkm install lz4.org'
       Write-Host '(installs verify against the signed registry by default)'
     }
-    'zpkgx' {
-      Write-Host 'Done. Next:  zpkgx node@22 --version'
+    'zpkx' {
+      Write-Host 'Done. Next:  zpkx node@22 --version'
       Write-Host '(runs packages on the fly; verifies against the signed registry by default)'
-      Write-Host "To ask ABOUT packages, install its other half: `$env:ZPKG_TOOL='zpkgs'"
+      Write-Host "To ask ABOUT packages, install its other half: `$env:ZPKG_TOOL='zpks'"
     }
-    'zpkgs' {
-      Write-Host 'Done. Next:  zpkgs catalog update  then  zpkgs search rg'
+    'zpks' {
+      Write-Host 'Done. Next:  zpks catalog update  then  zpks search rg'
       Write-Host '(answers about packages - ls, search, why, store, browse, env)'
-      Write-Host "To RUN one, install its other half: `$env:ZPKG_TOOL='zpkgx'"
+      Write-Host "To RUN one, install its other half: `$env:ZPKG_TOOL='zpkx'"
     }
     'mirror' {
       Write-Host 'Done. Next:  mirror agwa.name/git-crypt --dest ./m'

@@ -5,7 +5,7 @@
 # that fires on a push to THIS one cannot see the event that changes the
 # answer. tools/versioncheck's header makes exactly this argument about
 # version pins, and lost a week to it: on 2026-10-04 the site told visitors to
-# install zpkgm v0.1.4 and zpkgx v0.1.5 while the releases were v0.1.7 and
+# install zpkm v0.1.4 and zpkx v0.1.5 while the releases were v0.1.7 and
 # v0.1.10, and nothing anywhere said so. A hand-typed list of seven projects
 # would rot the same way, which is why `wasmstage -derive` asks the published
 # catalogue instead of reading a list out of this file.
@@ -168,7 +168,7 @@ jobs:
       # Adding a fixture without adding it here goes red, and vice versa.
       #
       # The rest of the platform is not hidden: the docs list all 34 and they
-      # install with `zpkgx --platform wasip1/wasm` for a local wasmtime.
+      # install with `zpkx --platform wasip1/wasm` for a local wasmtime.
       - name: stage the wasip1/wasm modules
         working-directory: tools/wasmstage
         env:
