@@ -41,10 +41,9 @@
            Our own 9.1 MB stays, because it is ours, it is measurable, and it
            is the claim that matters here: a binary small enough and static
            enough to be the only file in an image. */}}
-      <p class="sub">A <b>runtime</b> that runs packages on the fly, an <b>installer</b>, and the <b>artifact backend</b> they share — in pure <code>CGO_ENABLED=0</code> Go. Single <b>9.1&nbsp;MB</b> static binaries that need no libc at all, so they run on a literally empty <code>FROM scratch</code> image and materialise real packages there. BSD-3-Clause.</p>
-      <div class="cta">
-        <a class="btn btn-primary" href="#install">{{ partial "icons/arrow-right.html" . }}Install in one line →</a>
-      </div>
+      <p class="sub">A <b>runtime</b> that runs packages on the fly, an <b>installer</b>, and the <b>artifact backend</b> they share. Single <b>9.1&nbsp;MB</b> static binaries that need no libc at all, so they run on a literally empty <code>FROM scratch</code> image and materialise real packages there. {{ if not (partial "mantra-on.html" $) }}BSD-3-Clause{{ end }}.</p>
+      {{/* [[params.cta]] in hugo.toml: the kit renders the row */}}
+      {{ partial "cta.html" . }}
       {{/* ⛔ DERIVED. The sibling orgs learned this the hard way: a count typed
            beside the data it counts was right when it was typed and had no way
            of staying right. */}}
@@ -226,6 +225,6 @@ git-scm.org — 2.55.0  ✓ 2.47.1
     </div>
   </div></section>
 
-  <footer><div class="wrap"><span>© the go-zpkg authors · BSD-3-Clause</span><span>Pure Go · CGO_ENABLED=0 · runs on FROM scratch</span></div></footer>
+  <footer><div class="wrap"><span>© the go-zpkg authors{{ if not (partial "mantra-on.html" $) }} · BSD-3-Clause{{ end }}</span><span>{{ if not (partial "mantra-on.html" $) }}Pure Go · {{ end }}{{ if not (partial "mantra-on.html" $) }}CGO_ENABLED=0 · {{ end }}runs on FROM scratch</span></div></footer>
 </body>
 </html>
