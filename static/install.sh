@@ -1,7 +1,7 @@
 #!/bin/sh
 # go-zpkg installer — the pure-Go pkgx family (zpkm, zpkx, zpks, mirror).
 #
-#   curl -fsSL https://go-zpkg.github.io/install.sh | sh -s -- zpkm v0.10.0
+#   curl -fsSL https://go-zpkg.github.io/install.sh | sh -s -- zpkm v0.11.0
 #   curl -fsSL https://go-zpkg.github.io/install.sh | sh -s -- zpkm latest
 #   curl -fsSL https://go-zpkg.github.io/install.sh | sh            # zpkm, latest
 #   curl -fsSL https://go-zpkg.github.io/install.sh | sh -s -- zpkx # another tool
