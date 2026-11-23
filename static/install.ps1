@@ -12,8 +12,8 @@
   A piped script takes no arguments, so on Windows the version is pinned with
   the environment variable above. Saved to disk, both are positional:
 
-      .\install.ps1 zpkx v0.39.0
-      .\install.ps1 zpks v0.39.0
+      .\install.ps1 zpkx v0.40.3
+      .\install.ps1 zpks v0.40.3
       .\install.ps1 zpkx latest
 
   Selects one of {zpkm, zpkx, zpks, mirror}, downloads its static <tool>.exe
